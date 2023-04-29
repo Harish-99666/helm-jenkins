@@ -20,10 +20,13 @@ global:
 
 ## @param kubeVersion Override Kubernetes version
 ##
+kubeVersion: ""
 ## @param nameOverride String to partially override common.names.fullname
 ##
+nameOverride: ""
 ## @param fullnameOverride String to fully override common.names.fullname
 ##
+fullnameOverride: ""
 ## @param commonLabels Labels to add to all deployed objects
 ##
 commonLabels: {}
@@ -37,7 +40,7 @@ clusterDomain: cluster.local
 ##
 extraDeploy: []
 ## Enable diagnostic mode in the deployment
-
+##
 diagnosticMode:
   ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
   ##
@@ -51,7 +54,6 @@ diagnosticMode:
   args:
     - infinity
 
-##
 ## @section Jenkins Image parameters
 
 ## Bitnami Jenkins image
@@ -137,7 +139,10 @@ extraEnvVarsSecret: ""
 ##   - git:4.13.0
 ##   - configuration-as-code:1569.vb_72405b_80249
 ##
-plugins: []
+plugins:
+- kubernetes:latest
+- git:latest
+
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
 extraPlugins: []
@@ -325,7 +330,7 @@ configAsCode:
 agent:
   ## @param agent.enabled Set to true to enable the configuration of Jenkins kubernetes agents
   ##
-  enabled: true
+  enabled: false
   ## Bitnami Jenkins agent image
   ## ref: https://hub.docker.com/r/bitnami/jenkins/tags/
   ## @param agent.image.registry Jenkins image registry
@@ -925,3 +930,38 @@ volumePermissions:
 ## @section Other Parameters
 ##
 
+## RBAC configuration
+##
+rbac:
+  ## @param rbac.create Specifies whether RBAC resources should be created
+  ##
+  create: true
+  ## @param rbac.rules Custom RBAC rules to set
+  ## e.g:
+  ## rules:
+  ##   - apiGroups:
+  ##       - ""
+  ##     resources:
+  ##       - pods
+  ##     verbs:
+  ##       - get
+  ##       - list
+  ##
+  rules: []
+
+## ServiceAccount configuration
+##
+serviceAccount:
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  ##
+  create: true
+  ## @param serviceAccount.name The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the common.names.fullname template
+  ##
+  name: ""
+  ## @param serviceAccount.annotations Additional Service Account annotations (evaluated as a template)
+  ##
+  annotations: {}
+  ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
+  ##
+  automountServiceAccountToken: true
