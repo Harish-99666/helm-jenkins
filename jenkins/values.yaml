@@ -140,8 +140,8 @@ extraEnvVarsSecret: ""
 ##   - configuration-as-code:1569.vb_72405b_80249
 ##
 plugins:
-- kubernetes:latest
-- git:latest
+ - kubernetes:latest
+ - git:latest
 
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
