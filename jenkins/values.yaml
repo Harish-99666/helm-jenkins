@@ -1,31 +1,103 @@
+## @section Global parameters
+## Global Docker image parameters
+## Please, note that this will override the image parameters, including dependencies, configured to use the global value
+## Current available global Docker image parameters: imageRegistry, imagePullSecrets and storageClass
+
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
 global:
   imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
   imagePullSecrets: []
   storageClass: ""
 
+## @section Common parameters
+
+## @param kubeVersion Override Kubernetes version
+##
+## @param nameOverride String to partially override common.names.fullname
+##
+## @param fullnameOverride String to fully override common.names.fullname
+##
+## @param commonLabels Labels to add to all deployed objects
+##
+commonLabels: {}
+## @param commonAnnotations Annotations to add to all deployed objects
+##
+commonAnnotations: {}
+## @param clusterDomain Kubernetes cluster domain name
+##
 clusterDomain: cluster.local
 ## @param extraDeploy Array of extra objects to deploy with the release
 ##
 extraDeploy: []
 ## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - infinity
 
+## @section Jenkins Image parameters
+
+## Bitnami Jenkins image
+## ref: https://hub.docker.com/r/bitnami/jenkins/tags/
+## @param image.registry Jenkins image registry
+## @param image.repository Jenkins image repository
+## @param image.tag Jenkins image tag (immutable tags are recommended)
+## @param image.digest Jenkins image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy Jenkins image pull policy
+## @param image.pullSecrets Jenkins image pull secrets
+## @param image.debug Enable image debug mode
+##
 image:
   registry: docker.io
   repository: bitnami/jenkins
   tag: 2.387.2-debian-11-r0
   digest: ""
-
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
   pullPolicy: IfNotPresent
-
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## e.g:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
   pullSecrets: []
   ## Enable debug mode
   ##
   debug: false
 
+## @section Jenkins Configuration parameters
+## Jenkins settings based on environment variables
+## ref: https://github.com/bitnami/containers/tree/main/bitnami/jenkins#configuration
+
+## @param jenkinsUser Jenkins username
+##
 jenkinsUser: user
-
+## @param jenkinsPassword Jenkins user password
+## Defaults to a random 10-character alphanumeric string if not set
+##
 jenkinsPassword: ""
-
+## @param jenkinsHost Jenkins host to create application URLs
+##
 jenkinsHost: ""
 ## @param jenkinsHome Jenkins home directory
 ##
@@ -56,6 +128,14 @@ extraEnvVarsCM: ""
 ##
 extraEnvVarsSecret: ""
 
+## @param plugins List of plugins to be installed during Jenkins first boot.
+## Note: For this value to take effect on already initialized pods, set overridePlugins=true.
+## plugins:
+##   - kubernetes:3852.v41ea_166a_ed1b_
+##   - workflow-aggregator:590.v6a_d052e5a_a_b_5
+##   - git:4.13.0
+##   - configuration-as-code:1569.vb_72405b_80249
+##
 plugins: []
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
@@ -65,7 +145,6 @@ extraPlugins: []
 latestPlugins: true
 ## @param latestSpecifiedPlugins Set to true download the latest dependencies of any plugin that is requested to have the latest version.
 ##
-
 latestSpecifiedPlugins: false
 ## @param skipImagePlugins Set this value to true to skip installing plugins stored under /opt/bitnami/jenkins/plugins
 ##
@@ -245,7 +324,7 @@ configAsCode:
 agent:
   ## @param agent.enabled Set to true to enable the configuration of Jenkins kubernetes agents
   ##
-  enabled: true
+  enabled: false
   ## Bitnami Jenkins agent image
   ## ref: https://hub.docker.com/r/bitnami/jenkins/tags/
   ## @param agent.image.registry Jenkins image registry
